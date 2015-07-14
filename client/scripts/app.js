@@ -9,6 +9,10 @@ $(document).ready(function(){
     roomname: 'Barn'
   };
 
+  var friendListObj = {};
+
+  //Keep track of the rooms the user has created
+  var userRooms = [];
 
   var setUsername = function(name){
     message.username = name;
@@ -22,8 +26,6 @@ $(document).ready(function(){
   var setRoom = function(roomName){
     message.roomname = roomName;
   }
-
-
 
   var refreshMessages = function(){
     
@@ -42,10 +44,14 @@ $(document).ready(function(){
       
       _.each(last10Messages, function(messageObj){
         var $divMessage = $('<div class="message"></div>');
-        var $userName = $('<span></span>');
+        if(friendListObj[messageObj.username]) {
+          var $userName = $('<a class="strong"></a>');
+        } else {
+          var $userName = $('<a></a>');
+        }
         var $messageText = $('<span></span>');
-        $userName.text(messageObj.username + ': ');
-        $messageText.text(messageObj.text);
+        $userName.text(messageObj.username);
+        $messageText.text(': ' + messageObj.text);
         $userName.appendTo($divMessage);
         $messageText.appendTo($divMessage);
         $divMessage.appendTo($('.message-container'));
@@ -60,15 +66,16 @@ $(document).ready(function(){
   var initRoomSelector = function(){
     
     var roomsDup = [];
+    _.each(userRooms, function(room){
+      roomsDup.push(room);
+    })
 
     var setSelector = function(roomsList){
-      
       _.each(roomsList, function(room){
         var $option = $('<option></option>');
         $option.text(room);
         $option.appendTo('.rooms');
       });
-
     };
 
     $.get(baseUrl, function(data){
@@ -80,13 +87,10 @@ $(document).ready(function(){
       var rooms = _.uniq(roomsDup);
 
       setSelector(rooms);
-    
     });
-
   };
 
   initRoomSelector();
-
 
   //
   // Click handlers
@@ -105,12 +109,44 @@ $(document).ready(function(){
   });
 
   $('.submit-post').on('click', function(){
+    setRoom($('.rooms option:selected').text());
     setText($('.post-text').val());
     postMessage();
     refreshMessages();
   });
 
-  
+  $('.submit-new-room').on('click', function(){
+    var submittedRoom = $('.set-new-room').val()
+    setUsername(submittedRoom);
+    userRooms.push(submittedRoom);
+    initRoomSelector();
+  });
 
-  //postMessage(message);
+  $('.message-container').on('click', 'a', function(){
+    
+    if(!($(this).text() in friendListObj)) {
+      var $friendName = $('<li>' + $(this).text() + '</li>');;
+      var $friendList = $('#friend-list');
+
+      $friendName.appendTo($friendList);
+      friendListObj[$(this).text()] = true;
+      console.log(friendListObj);
+    }
+
+  });
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+

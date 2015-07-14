@@ -15,7 +15,8 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <select class="rooms"></select>
+      <span>Active Rooms: </span><select class="rooms"></select><p>
+      <input type="text" class="set-new-room"></input><span><button class='submit-new-room'>Create New Room</button></span><p>
       <p class="username-flag"></p>
       <input type="text" class="set-username"></input><span><button class='submit-username'>Set Username</button></span>
       <p>
@@ -25,6 +26,10 @@
         <p>
       </div>
 
+    </div>
+    <div id='friends'>
+      <h3>Friends</p>
+      <ul id='friend-list'></ul>
     </div>
   </body>
 </html>
